@@ -123,7 +123,8 @@ Order.belongsTo(User, { foreignKey: 'userId' });
 Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items' });
 OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
 
-sequelize.sync()
+sequelize.authenticate()
+  .then(() => sequelize.sync())
   .then(async () => {
     await seedDatabase();
     app.listen(PORT, () => {
@@ -131,5 +132,8 @@ sequelize.sync()
     });
   })
   .catch((error) => {
-    console.error('Gagal menyambung ke database:', error);
+    console.error(
+      `Gagal menyambung ke database ${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || '3306'} -`,
+      error
+    );
   });
